@@ -42,3 +42,38 @@ export const users = pgTable(
     }
 );
 // renewable energy sites table
+export const renewableSites = pgTable("renewable_sites",
+    {
+        id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+        userId: varchar("user_id").references(()=> users.id),
+        name: varchar("name").notNull(),
+        type: energyTypeEnum("type").notNull(),
+        latitude: decimal("latitude", { precision: 10, scale: 8 }).notNull(),
+        longitude: decimal("longitude", { precision: 11, scale: 8 }).notNull(),
+        capacity: integer("capacity").notNull(), //in MW
+        sustainabilityScore: integer("sustainability_score").notNull(), //0-100
+        isAiSuggestes: boolean("is_ai_suggested").default(false),
+
+        //technical metrics
+        resourceQuality: integer("resource_quality"), //0-100
+        gridDistance: integer("grid_distance"), //in km
+        landArea: integer("land_area"), // in hectares
+
+        // Performance metrics
+        annualGeneration: integer("annual_generation"), // in MWh
+        capacityFactor: decimal("capacity_factor", { precision: 4, scale: 2}), //0-1
+
+        // Impact metrics
+        co2savedAnually: integer("co2_saved_annually"), //in tons
+        homeSupported: integer("homes_supported"), //number of homes powered
+
+        // Economic metrics
+        investsmentRequired: integer("investment_required"), //in USD
+        roiPercentage: decimal("roi_percentage", { precision: 5, scale: 2}), //0-100
+        paybackYears: decimal("payback_years", { precision: 4, scale: 1}),
+        // additional data
+        description: text("description"),
+        createdAt: timestamp("created_at").defaultNow(),
+        updatedAt: timestamp("updated_at").defaultNow(),
+    }
+);
