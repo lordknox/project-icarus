@@ -1,6 +1,6 @@
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
-import * as schema from '../shared/schema';
+import * as schema from '../shared/schema.js';
 //check if database url is set or not
 if(!process.env.DATABASE_URL){
     console.error('❌ ERROR: DATABASE_URL environment variable is not set!');

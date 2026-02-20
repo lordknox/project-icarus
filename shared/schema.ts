@@ -51,7 +51,7 @@ export const renewableSites = pgTable("renewable_sites",
         latitude: decimal("latitude", { precision: 10, scale: 8 }).notNull(),
         longitude: decimal("longitude", { precision: 11, scale: 8 }).notNull(),
         capacity: integer("capacity").notNull(), //in MW
-        sustainabilityScore: integer("sustainability_score").notNull(), //0-100
+        suitabilityScore: integer("sustainability_score").notNull(), //0-100
         isAiSuggested: boolean("is_ai_suggested").default(false),
 
         //technical metrics
@@ -64,8 +64,8 @@ export const renewableSites = pgTable("renewable_sites",
         capacityFactor: decimal("capacity_factor", { precision: 4, scale: 2}), //0-1
 
         // Impact metrics
-        co2savedAnnually: integer("co2_saved_annually"), //in tons
-        homeSupported: integer("homes_supported"), //number of homes powered
+        co2SavedAnnually: integer("co2_saved_annually"), //in tons
+        homesSupported: integer("homes_supported"), //number of homes powered
 
         // Economic metrics
         investmentRequired: integer("investment_required"), //in USD

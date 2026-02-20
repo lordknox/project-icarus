@@ -4,7 +4,7 @@
         "module": "nodenext",
         "moduleResolution": "nodenext",
         "outDir": "../dist/server",
-        "rootDir": ".",
+        // "rootDir": ".",
         "noEmit": false
     },
     "include": [
