@@ -296,4 +296,82 @@ export async function analyzeSite(input: SiteInput): Promise<SiteAnalysis> {
     if(resourceQuality >=85) {
         recommendations.push('Excellent resource quality - high potential for energy generation');
     } else if (resourceQuality >= 70) {
+        recommendations.push('Good resource Potential - proceed with detailed feasibility study');
+    } else if (resourceQuality >= 50) {
+        recommendations.push('Moderate resource quality - consider if other factors are favorable');
+    } else {
+        recommendations.push('Low resource quality - explore alternative locations');
+    }
+
+    if(gridDistance < 10) {
+        recommendations.push('Excellent grid connectivity reduces interconnection costs significantly');
+    } else if (gridDistance < 30) {
+        recommendations.push('Moderate grid distance - factor in transmission line costs');
+    } else {
+        recommendations.push('Significant distance to grid - high interconnection costs expected');
+    }
+
+    if(roi >= 12 ) {
+        recommendations.push('Strong economic returns - attractive investment opportunity');
+    } else if (roi >= 8) {
+        recommendations.push('Moderate returns - consider government incentives and PPAs');
+    } else if(roi >= 5) {
+        recommendations.push('Lower returns - requires favorable financing terms');
+    } else {
+        recommendations.push('Economic viability concerns - explore cost reduction strategies');        
+    }
+
+    if(co2SavedAnnually >= 50000) {
+        recommendations.push('Significant environmental impact - strong case for green financing');
+    }
+
+    // generate warnings
+    const warnings: string[] = [];
+    if(resourceQuality < 40 ) {
+        warnings.push('Low resource quality may significantly impact project viability');
+    }
+    if(gridDistance > 50) {
+        warnings.push('Very high grid connection costs due to distance - detailed cost analysis required');
+    }
+    if(payBackPeriod > 15) {
+        warnings.push('Long payback period may deter investment - explore revenue enhancement options');
+    }
+    if (roi < 5) {
+        warnings.push('Return on investment below typical market expectations');
+    }
+
+    console.log(`✅ Analysis complete - Suitability Score: ${suitabilityScore}/100`);
+
+    return{
+        suitabilityScore: Math.min(Math.max(suitabilityScore, 0), 100),
+        energyType: type,
+        factors: {
+            resourceQuality,
+            gridProximity,
+            landAvailability: 'Good',
+            economicViability: roi >= 10? 'Excellent' : roi >= 7 ? 'Good' : roi >= 5 ? 'Fair' : 'Poor',
+            environmentalImpact: 'Positive',
+        },
+        technicalMetrics: {
+            estimatedCapacity: capacity,
+            capacityFactor: Math.round(capacityFactor *100) /100,
+            annualGeneration,
+            gridDistance: Math.round(gridDistance * 10) /10,
+            landAreaRequired,
+        },
+        economicMetrics: {
+            investmentRequired,
+            annualRevenue,
+            operatingCosts,
+            roi: Math.round(roi * 100)/100,
+            paybackPeriod: Math.round(payBackPeriod * 10)/10,
+        },
+        impactMetrics: {
+            co2SavedAnnually,
+            homesSupported,
+            jobsCreated,
+        },
+        recommendations,
+        warnings,
+    };
 }
