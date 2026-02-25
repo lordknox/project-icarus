@@ -5,7 +5,7 @@
     "license": "MIT",
     "description": "Interactive platform for wind and solar energy infrastructure mapping and analysis",
     "scripts": {
-        "dev": "NODE_ENV=development tsx server/index.ts",
+        "dev": "NODE_ENV=development tsx -r dotenv/config server/index.ts",
         "build": "vite build && tsc",
         "build:client": "vite build",
         "build:server": "tsc",
