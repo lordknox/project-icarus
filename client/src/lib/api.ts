@@ -177,7 +177,7 @@ class ApiClient {
    }
 
    async getWindResources(): Promise<WindResource[]> {
-    return this.fetch<WindResource[]>('/api/wind-resource');
+    return this.fetch<WindResource[]>('/api/wind-resources');
    }
 
    async getSolarResources(): Promise<SolarResource[]> {

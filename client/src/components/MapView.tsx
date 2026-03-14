@@ -8,8 +8,8 @@ import {
     useSolarResources,
     useGridInfrastructure,
     useDemandCenters,
-} from '../../hooks/useRenewableSites';
-import { RenewableSite } from "../../lib/api";
+} from '../hooks/useRenewableSites';
+import { RenewableSite } from "../lib/api";
 import { Wind, Sun, Zap, Factory, MapPin } from 'lucide-react';
 
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
@@ -50,6 +50,7 @@ export function MapView({ onSiteClick }: MapViewProps) {
     const { data: sites, isLoading: sitesLoading } = useRenewableSites();
     const { data: windZones, isLoading: windLoading } = useWindResources();
     const { data: solarZones, isLoading: solarLoading } = useSolarResources();
+    const { data: gridPoints, isLoading: gridLoading } = useGridInfrastructure();
     const { data: demandCenters, isLoading: demandLoading } = useDemandCenters();
 
     const getSiteColor = (type: string, isAI: boolean) => {
@@ -221,27 +222,33 @@ export function MapView({ onSiteClick }: MapViewProps) {
         ))}
 
         {/* Grid Infrastructure */}
-        {showLayers.grid && gridPoints?.map((point) => (
-          <Marker
-            key={point.id}
-            position={[parseFloat(point.latitude), parseFloat(point.longitude)]}
+        {showLayers.grid && gridPoints && gridPoints.length > 0 && gridPoints.map((point) => {
+         const lat = parseFloat(point.latitude);
+         const lng = parseFloat(point.longitude);
+         if (isNaN(lat) || isNaN(lng)) return null;
+  
+        return (
+         <Marker
+           key={point.id}
+           position={[lat, lng]}
           >
-            <Popup>
-              <div className="text-sm">
-                <div className="flex items-center gap-2 mb-1">
-                  <Zap className="w-4 h-4 text-yellow-600" />
-                  <strong>{point.name}</strong>
-                </div>
-                <div className="text-xs space-y-1">
-                  <div className="capitalize">{point.type.replace('_', ' ')}</div>
-                  {point.voltage && <div>Voltage: {point.voltage} kV</div>}
-                  {point.capacity && <div>Capacity: {point.capacity} MW</div>}
-                  {point.operator && <div>Operator: {point.operator}</div>}
-                </div>
-              </div>
-            </Popup>
-          </Marker>
-        ))}
+         <Popup>
+          <div className="text-sm">
+          <div className="flex items-center gap-2 mb-1">
+            <Zap className="w-4 h-4 text-yellow-600" />
+            <strong>{point.name}</strong>
+          </div>
+          <div className="text-xs space-y-1">
+            <div className="capitalize">{point.type.replace('_', ' ')}</div>
+            {point.voltage && <div>Voltage: {point.voltage} kV</div>}
+            {point.capacity && <div>Capacity: {point.capacity} MW</div>}
+            {point.operator && <div>Operator: {point.operator}</div>}
+          </div>
+        </div>
+      </Popup>
+    </Marker>
+  );
+})}
 
         {/* Demand Centers */}
         {showLayers.demand && demandCenters?.map((center) => (
