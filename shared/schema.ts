@@ -1,4 +1,4 @@
-import { table } from 'console';
+
 import { sql } from 'drizzle-orm';
 import { 
     index,
