@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, Circle, useMap } from 'react-leaflet';
-import { Icon, LatlngExpression } from 'leaflet';
+import { Icon, LatLngExpression } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import {
     useRenewableSites,
@@ -23,14 +23,14 @@ Icon.Default.mergeOptions({
     shadowUrl: markerShadow,
 });
 
-const INDIA_CENTER: LatlngExpression = [20.5937,78.9629];
+const INDIA_CENTER: LatLngExpression = [20.5937,78.9629];
 const INDIA_ZOOM = 5;
 
 interface MapViewProps {
     onSiteClick?: (site: RenewableSite) => void;
 }
 
-function MapRecenter({ center }: { center: LatlngExpression}) {
+function MapRecenter({ center }: { center: LatLngExpression}) {
     const map = useMap();
     useEffect(()=> {
         map.setView(center);
