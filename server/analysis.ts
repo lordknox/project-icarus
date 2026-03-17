@@ -4,7 +4,7 @@ import {
     solarResources,
     gridInfrastructure,
     demandCenters,    
-} from '../shared/schema';
+} from '../shared/schema.js';
 
 export type EnergyType = 'wind' | 'solar' | 'hybrid';
 
