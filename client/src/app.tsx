@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState } from 'react';
-import { MapView } from './components/MapView';
+import { MapView } from './components/MapViewEnhanced';
 import { Dashboard } from './components/Dashboard/Dashboard';
 import { Sidebar } from './components/Sidebar';
 
