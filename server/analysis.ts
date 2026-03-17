@@ -164,7 +164,7 @@ async function scoreSolarSite(lat: number, lon: number): Promise<number> {
         } else if (ghi>=5.5) {
             ghiScore = 85;
         } else if ( ghi >= 5.0) {
-            return 75; //Good
+            ghiScore =  75; //Good
         } else if (ghi >= 4.5) {
             ghiScore = 65;
         } else if (ghi>=4.0) {
@@ -238,8 +238,8 @@ export async function analyzeSite(input: SiteInput): Promise<SiteAnalysis> {
     }
 
     //adjusted capacity factor based on resource quality
-    const resouceAdjustment = (resourceQuality - 50) /100; // -0.5 to +0.5
-    capacityFactor = Math.max(0.1, Math.min(0.6, capacityFactor + resouceAdjustment * 0.1));
+    const resourceAdjustment = (resourceQuality - 50) /100; // -0.5 to +0.5
+    capacityFactor = Math.max(0.1, Math.min(0.6, capacityFactor + resourceAdjustment * 0.1));
 
     // technical metrics
     const annualGeneration = Math.round(capacity * capacityFactor * 8760);// MWh per year
