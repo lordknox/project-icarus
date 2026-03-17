@@ -113,7 +113,7 @@ export function setupRoutes (app: Express) {
                     co2SavedAnnually: analysis.impactMetrics.co2SavedAnnually,
                     homesSupported: analysis.impactMetrics.homesSupported,
                     investmentRequired: analysis.economicMetrics.investmentRequired,
-                    roiPercentage: analysis.economicMetrics.roiPercentage.toString(),
+                    roiPercentage: analysis.economicMetrics.roi.toString(),
                     paybackYears: analysis.economicMetrics.paybackPeriod.toString(),
                     isAiSuggested: false,
                 }).returning();
