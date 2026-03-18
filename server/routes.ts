@@ -37,6 +37,7 @@ export function setupRoutes (app: Express) {
             res.status(500).json({ error: 'Failed to fetch renewable sites'});
         }
     });
+
     /**
      * GET /api/renewable-sites/:id
      * Get a single renewable site by ID
@@ -54,7 +55,6 @@ export function setupRoutes (app: Express) {
             if(!site) {
                 return res.status(404).json({ error: 'Site not found' });
             }
-
             console.log(`📍 Fetched site: ${site.name}`);
             res.json(site);
         } catch (error) {
@@ -62,6 +62,7 @@ export function setupRoutes (app: Express) {
             res.status(500).json({ error: 'Failed to fetch site' });
         }
     });
+
     /**
      * POST /api/renewable-sites
      * Create a new renewable site
@@ -69,7 +70,6 @@ export function setupRoutes (app: Express) {
     app.post('/api/renewable-sites/', async (req: Request, res: Response) => {
         try {
             const { name, type, latitude, longitude, capacity } = req.body;
-
             //validate required fields
             if( !name || !type || latitude === undefined || longitude === undefined) {
                 return res.status(400).json({
@@ -87,7 +87,6 @@ export function setupRoutes (app: Express) {
             const siteCapacity = capacity || 50;
             
             console.log(`🏗️  Creating new ${type} site: ${name} at (${latitude}, ${longitude})`);
-
             //perform site analysis 
             const analysis = await analyzeSite({
                 type,
@@ -118,7 +117,6 @@ export function setupRoutes (app: Express) {
                     isAiSuggested: false,
                 }).returning();
             console.log(`✅ Site created successfully: ID ${newSite.id}`);
-
             //return both site and analysis
             res.status(201).json({
                 site: newSite,
@@ -129,6 +127,7 @@ export function setupRoutes (app: Express) {
             res.status(500).json({ error: 'Failed to create renewable site' });
         }
     });
+
     /**
      * PUT /api/renewable-sites/:id
      * Update an existing renewable site
@@ -136,30 +135,24 @@ export function setupRoutes (app: Express) {
     app.put('/api/renewable-sites/:id', async (req: Request, res: Response) => {
         try {
             const id = req.params.id;
-
             if(!id || id.trim() === '') {
                 return res.status(400).json({ error: 'Invalid site ID' });
             }
             const { name, capacity, description } = req.body;
-
             //Build update object with only provided fields
             const updateData: any = {};
             if(name !== undefined) updateData.name = name;
             if(capacity !== undefined) updateData.capacity = capacity;
             if(description !== undefined) updateData.description = description;
-
             if(Object.keys(updateData).length === 0 ){
                 return res.status(400).json({ error: 'No fields to update' });
             }
-
             console.log(`✏️  Updating site ID ${id}`);
-
             const [updatedSite] = await db
                 .update(renewableSites)
                 .set(updateData)
                 .where(eq(renewableSites.id, id))
                 .returning();
-
             if(!updatedSite) {
                 return res.status(404).json({ error: 'Site not found' });
             }
@@ -179,7 +172,6 @@ export function setupRoutes (app: Express) {
     app.delete('/api/renewable-sites/:id',async (req: Request, res:Response) => {
         try{
             const id = req.params.id;
-
             if(!id||id.trim() === ''){
                 return res.status(400).json({ error: 'Invalid site ID' });
             }
@@ -188,7 +180,6 @@ export function setupRoutes (app: Express) {
                 .delete(renewableSites)
                 .where(eq(renewableSites.id, id))
                 .returning();
-
             if(!deleted) {
                 return res.status(404).json({ error: 'Site not found' });
             }
@@ -202,6 +193,7 @@ export function setupRoutes (app: Express) {
             res.status(500).json({ error: 'Failed to delete site' });
         }
     });
+
     // ============================================
     // AI SUGGESTIONS ENDPOINT
     // ============================================
@@ -303,7 +295,6 @@ export function setupRoutes (app: Express) {
     app.get('/api/dashboard/stats', async (req: Request, res: Response) => {
         try{
             const sites = await db.select().from(renewableSites);
-
             const stats = {
                 totalSites: sites.length,
                 totalCapacity: sites.reduce((sum, site) => sum + site.capacity,0),
@@ -337,14 +328,63 @@ export function setupRoutes (app: Express) {
         }
     });
 
+    // ============================================
+    // SITE ANALYSIS ENDPOINTS
+    // ============================================
+
+    /**
+     * POST /api/analyze-site
+     * Analyze a potential site without saving (for map click-to-analyze feature)
+     */
+    app.post('/api/analyze-site', async (req: Request, res: Response) => {
+      try {
+        console.log('📍 Analyze site request received:', req.body);
+        
+        const { type, latitude, longitude, capacity } = req.body;
+        
+        // Validate inputs
+        if (!type || latitude === undefined || longitude === undefined) {
+          console.error('❌ Missing required fields');
+          return res.status(400).json({
+            error: 'Missing required fields',
+            required: ['type', 'latitude', 'longitude']
+          });
+        }
+        
+        if (isNaN(parseFloat(latitude)) || isNaN(parseFloat(longitude))) {
+          console.error('❌ Invalid coordinates');
+          return res.status(400).json({ error: 'Invalid coordinates' });
+        }
+        
+        console.log(`🔍 Starting analysis for ${type} site at ${latitude}, ${longitude}`);
+        
+        const analysis = await analyzeSite({
+          type,
+          latitude: parseFloat(latitude),
+          longitude: parseFloat(longitude),
+          capacity: capacity || (type === 'wind' ? 300 : type === 'solar' ? 500 : 400),
+        });
+        
+        console.log(`✅ Analysis completed - Score: ${analysis.suitabilityScore}/100`);
+        res.json(analysis);
+        
+      } catch (error: any) {
+        console.error('❌ Analysis failed with error:', error);
+        console.error('Stack trace:', error.stack);
+        res.status(500).json({ 
+          error: 'Failed to analyze site', 
+          details: error.message 
+        });
+      }
+    });
+
     /**
      * POST /api/analysis/site
-     * Analyze a potential site without saving 
+     * Analyze a potential site without saving (alternative endpoint)
      */
     app.post('/api/analysis/site', async (req: Request, res: Response) => {
         try{
             const { type, latitude, longitude, capacity } = req.body;
-
             if(!type || latitude === undefined || longitude === undefined) {
                 return res.status(400).json({
                     error: 'Missing required fields',
@@ -352,7 +392,6 @@ export function setupRoutes (app: Express) {
                 });
             }
             console.log(`🔍 Analyzing potential site: Type ${type}, Location (${latitude}, ${longitude}), Capacity ${capacity || 'N/A'}MW`);
-
             const analysis = await analyzeSite({
                 type,
                 latitude: parseFloat(latitude),
@@ -365,6 +404,6 @@ export function setupRoutes (app: Express) {
             res.status(500).json({ error: 'Failed to analyze site' });
         }
     });
-    console.log('✅ API routes configured successfully');
 
+    console.log('✅ API routes configured successfully');
 }

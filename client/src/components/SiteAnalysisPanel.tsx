@@ -6,9 +6,10 @@ interface SiteAnalysisPanelProps {
   analysis?: SiteAnalysis;
   onClose: () => void;
   isOpen: boolean;
+  coordinates?: { lat: number; lng: number }; 
 }
 
-export function SiteAnalysisPanel({ site, analysis, onClose, isOpen }: SiteAnalysisPanelProps) {
+export function SiteAnalysisPanel({ site, analysis, onClose, isOpen, coordinates }: SiteAnalysisPanelProps) {
   if (!isOpen) return null;
 
   const getScoreColor = (score: number) => {
@@ -301,11 +302,19 @@ export function SiteAnalysisPanel({ site, analysis, onClose, isOpen }: SiteAnaly
             <div className="p-4 bg-gray-50 rounded-lg space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600">Latitude</span>
-                <span className="font-mono">{parseFloat(site?.latitude || '0').toFixed(4)}°</span>
+                <span className="font-mono">
+                  {site?.latitude 
+                    ? parseFloat(site.latitude).toFixed(4)
+                    : coordinates?.lat.toFixed(4) || 'N/A'}°
+                </span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600">Longitude</span>
-                <span className="font-mono">{parseFloat(site?.longitude || '0').toFixed(4)}°</span>
+                <span className="font-mono">
+                  {site?.longitude 
+                    ? parseFloat(site.longitude).toFixed(4)
+                    : coordinates?.lng.toFixed(4) || 'N/A'}°
+                </span>
               </div>
             </div>
           </div>

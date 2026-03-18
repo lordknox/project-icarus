@@ -472,6 +472,7 @@ export function MapView() {
         analysis={analysisResult || undefined}
         onClose={handleClosePanel}
         isOpen={isPanelOpen}
+        coordinates={newPinLocation || undefined}
       />
     </div>
   );
