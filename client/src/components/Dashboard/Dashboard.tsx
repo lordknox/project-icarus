@@ -1,5 +1,6 @@
 import { useDashboardStats, useRenewableSites } from '../../hooks/useRenewableSites';
 import { Wind, Sun, Zap, TrendingUp, DollarSign, Home, Leaf } from 'lucide-react';
+import { DashboardCharts } from './DashboardCharts';
 
 export function Dashboard() {
     const { data: stats, isLoading: statsLoading } = useDashboardStats();
@@ -157,6 +158,11 @@ export function Dashboard() {
                     </div>
 
                 </div>
+
+                {/* Charts Section */}
+                {sites && sites.length > 0 && (
+                    <DashboardCharts sites={sites} />
+                )}
 
                 {/* Top Sites Table */}
                 <div className="bg-white rounded-lg shadow mb-6">
