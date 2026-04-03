@@ -165,6 +165,21 @@ class ApiClient {
     });
    }
 
+   async saveSite(data: {
+    name: string;
+    type: 'wind' | 'solar' | 'hybrid';
+    latitude: number;
+    longitude: number;
+    capacity: number;
+    analysis: SiteAnalysis;
+    }): Promise<RenewableSite> {
+        return this.fetch<RenewableSite>('/api/sites/save-analyzed', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+    });
+    }
+
    async deleteSite(id: string): Promise<void> {
     await this.fetch(`/api/renewable-sites/${id}`, {
         method: 'DELETE',

@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiClient } from "../lib/api";
+import { apiClient,SiteAnalysis } from "../lib/api";
 
 export function useRenewableSites(){
     return useQuery({
@@ -84,5 +84,23 @@ export function useDashboardStats() {
 export function useAnalyzeSite() {
   return useMutation({
     mutationFn: apiClient.analyzeSite.bind(apiClient),
+  });
+}
+
+export function useSaveSite() {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: (data: {
+      name: string;
+      type: 'wind' | 'solar' | 'hybrid';
+      latitude: number;
+      longitude: number;
+      capacity: number;
+      analysis: SiteAnalysis;
+    }) => apiClient.saveSite(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['renewable-sites'] });
+    },
   });
 }

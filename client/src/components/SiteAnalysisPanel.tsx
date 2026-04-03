@@ -1,4 +1,6 @@
-import { X, TrendingUp, Zap, MapPin, DollarSign, Leaf, Home, AlertTriangle, CheckCircle } from 'lucide-react';
+import { useState } from 'react';
+import { useSaveSite } from '../hooks/useRenewableSites';
+import { Save, Check, X, Zap, MapPin, DollarSign, Leaf, Home, AlertTriangle, CheckCircle } from 'lucide-react';
 import { RenewableSite, SiteAnalysis } from '../lib/api';
 
 interface SiteAnalysisPanelProps {
@@ -11,6 +13,11 @@ interface SiteAnalysisPanelProps {
 
 export function SiteAnalysisPanel({ site, analysis, onClose, isOpen, coordinates }: SiteAnalysisPanelProps) {
   if (!isOpen) return null;
+  
+  const [siteName, setSiteName] = useState('');
+  const [showNameInput, setShowNameInput] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+  const saveSiteMutation = useSaveSite();
 
   const getScoreColor = (score: number) => {
     if (score >= 90) return 'bg-green-500';
@@ -32,6 +39,38 @@ export function SiteAnalysisPanel({ site, analysis, onClose, isOpen, coordinates
     return num.toFixed(0);
   };
 
+  const handleSaveSite = async () => {
+    if (!analysis || !coordinates) return;
+    
+    if (!showNameInput) {
+      setShowNameInput(true);
+      return;
+    }
+
+    if (!siteName.trim()) {
+      alert('Please enter a site name');
+      return;
+    }
+
+    try {
+      await saveSiteMutation.mutateAsync({
+        name: siteName,
+        type: analysis.energyType,
+        latitude: coordinates.lat,
+        longitude: coordinates.lng,
+        capacity: analysis.technicalMetrics.estimatedCapacity,
+        analysis,
+      });
+      setIsSaved(true);
+      setShowNameInput(false);
+      setTimeout(() => {
+        onClose();
+      }, 1500);
+    } catch (error) {
+      alert('Failed to save site. Please try again.');
+    }
+  };
+
   return (
     <>
       {/* Overlay */}
@@ -50,6 +89,25 @@ export function SiteAnalysisPanel({ site, analysis, onClose, isOpen, coordinates
           >
             <X className="w-5 h-5" />
           </button>
+
+          {/* Save Button - Only show for new analyzed sites */}
+          {!site && analysis && coordinates && (
+            <button
+              onClick={handleSaveSite}
+              disabled={isSaved || saveSiteMutation.isPending}
+              className={`absolute top-4 right-16 p-2 rounded-lg transition-colors ${
+                isSaved
+                  ? 'bg-green-500 text-white'
+                  : 'bg-white/20 hover:bg-white/30 text-white'
+              }`}
+            >
+              {isSaved ? (
+                <Check className="w-5 h-5" />
+              ) : (
+                <Save className="w-5 h-5" />
+              )}
+            </button>
+          )}
 
           <div className="flex items-start gap-3 mb-3">
             <div className="p-2 bg-white/20 rounded-lg">
@@ -73,6 +131,45 @@ export function SiteAnalysisPanel({ site, analysis, onClose, isOpen, coordinates
 
         {/* Content */}
         <div className="p-6 space-y-6">
+          {/* Save Site Name Input */}
+          {showNameInput && !site && (
+            <div className="p-4 bg-blue-50 border-b border-blue-100 rounded-lg">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Site Name
+              </label>
+              <input
+                type="text"
+                value={siteName}
+                onChange={(e) => setSiteName(e.target.value)}
+                placeholder="e.g., Kutch Solar Farm"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                autoFocus
+              />
+              <div className="flex gap-2 mt-3">
+                <button
+                  onClick={handleSaveSite}
+                  disabled={saveSiteMutation.isPending}
+                  className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 font-medium"
+                >
+                  {saveSiteMutation.isPending ? 'Saving...' : 'Save Site'}
+                </button>
+                <button
+                  onClick={() => setShowNameInput(false)}
+                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
+
+          {isSaved && (
+            <div className="p-4 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2 text-green-700">
+              <Check className="w-5 h-5" />
+              <span className="font-medium">Site saved successfully!</span>
+            </div>
+          )}
+
           {/* Overall Score */}
           <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-100">
             <div className="flex items-center justify-between mb-4">

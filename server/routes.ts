@@ -379,6 +379,54 @@ export function setupRoutes (app: Express) {
     });
 
     /**
+ * POST /api/sites/save-analyzed
+ * Save an analyzed site to the database
+ */
+app.post('/api/sites/save-analyzed', async (req: Request, res: Response) => {
+  try {
+    const { name, type, latitude, longitude, capacity, analysis } = req.body;
+    
+    if (!name || !type || !latitude || !longitude || !analysis) {
+      return res.status(400).json({
+        error: 'Missing required fields',
+        required: ['name', 'type', 'latitude', 'longitude', 'analysis']
+      });
+    }
+
+    console.log(`💾 Saving analyzed site: ${name}`);
+
+    const [newSite] = await db
+      .insert(renewableSites)
+      .values({
+        name,
+        type,
+        latitude: latitude.toString(),
+        longitude: longitude.toString(),
+        capacity: capacity || 50,
+        suitabilityScore: analysis.suitabilityScore,
+        resourceQuality: analysis.factors.resourceQuality,
+        gridDistance: analysis.technicalMetrics.gridDistance,
+        landArea: analysis.technicalMetrics.landAreaRequired,
+        annualGeneration: analysis.technicalMetrics.annualGeneration,
+        capacityFactor: analysis.technicalMetrics.capacityFactor.toString(),
+        co2SavedAnnually: analysis.impactMetrics.co2SavedAnnually,
+        homesSupported: analysis.impactMetrics.homesSupported,
+        investmentRequired: analysis.economicMetrics.investmentRequired,
+        roiPercentage: analysis.economicMetrics.roi.toString(),
+        paybackYears: analysis.economicMetrics.paybackPeriod.toString(),
+        isAiSuggested: false,
+      })
+      .returning();
+
+    console.log(`✅ Site saved successfully: ${newSite.id}`);
+    res.status(201).json(newSite);
+  } catch (error) {
+    console.error('Error saving site:', error);
+    res.status(500).json({ error: 'Failed to save site' });
+  }
+});
+
+    /**
      * POST /api/analysis/site
      * Analyze a potential site without saving (alternative endpoint)
      */
