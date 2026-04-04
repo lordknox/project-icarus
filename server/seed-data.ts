@@ -6,7 +6,7 @@ import {
   gridInfrastructure,
   demandCenters,
   renewableSites,
-} from '../shared/schema';
+} from '../shared/schema.js';
 
 async function seedIndianDatabase() {
   console.log('\n╔══════════════════════════════════════════════════════╗');

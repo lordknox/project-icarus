@@ -40,9 +40,6 @@ export function Dashboard() {
           <p className="text-gray-600 mb-4">
             Start by analyzing potential sites on the map or exploring our AI recommendations.
           </p>
-          <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
-            Explore Map
-          </button>
         </div>
       </div>
     );

@@ -19,7 +19,7 @@
     "types": ["vite/client"],
     // "allowImportingTsExtensions": true,
     
-    "baseUrl": ".",
+    // "baseUrl": ".",
     "paths": {
       "@/*": ["./client/src/*"],
       "@shared/*": ["./shared/*"]
