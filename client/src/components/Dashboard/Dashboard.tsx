@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useRenewableSites } from '../../hooks/useRenewableSites';
 import { Zap, TrendingUp, DollarSign, Leaf, Home, BarChart3, Wind, Sun, Factory } from 'lucide-react';
 import { DashboardCharts } from './DashboardCharts';
-import { SiteComparison } from '../SiteComparision';
+import { SiteComparison } from '../SiteComparison';
+import { AnimatedCounter } from '../AnimatedCounter';
 
 export function Dashboard() {
   const { data: sites, isLoading, error } = useRenewableSites();
@@ -94,7 +95,11 @@ export function Dashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Total Sites</p>
-                <p className="text-3xl font-bold text-gray-900 mt-1">{sites.length}</p>
+                {/* <p className="text-3xl font-bold text-gray-900 mt-1">{sites.length}</p> */}
+                <AnimatedCounter
+                  end={sites.length}
+                  className="text-3xl font-bold text-gray-900 mt-1"
+                />
               </div>
               <div className="p-3 bg-blue-100 rounded-lg">
                 <Factory className="w-6 h-6 text-blue-600" />
@@ -106,7 +111,11 @@ export function Dashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Total Capacity</p>
-                <p className="text-3xl font-bold text-gray-900 mt-1">{totalCapacity.toLocaleString()} MW</p>
+                {/* <p className="text-3xl font-bold text-gray-900 mt-1">{totalCapacity.toLocaleString()} MW</p> */}
+                <AnimatedCounter
+                  end={totalCapacity}
+                  className="text-3xl font-bold text-gray-900 mt-1"
+                />
               </div>
               <div className="p-3 bg-yellow-100 rounded-lg">
                 <Zap className="w-6 h-6 text-yellow-600" />
@@ -118,9 +127,15 @@ export function Dashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Annual Generation</p>
-                <p className="text-3xl font-bold text-gray-900 mt-1">
+                {/* <p className="text-3xl font-bold text-gray-900 mt-1">
                   {(totalGeneration / 1000000).toFixed(1)}M MWh
-                </p>
+                </p> */}
+                <AnimatedCounter
+                  end={totalGeneration / 1000000}
+                  decimals={1}
+                  className="text-3xl font-bold text-gray-900 mt-1"
+                  suffix="M MWh"
+                />
               </div>
               <div className="p-3 bg-green-100 rounded-lg">
                 <TrendingUp className="w-6 h-6 text-green-600" />
@@ -132,9 +147,15 @@ export function Dashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Total Investment</p>
-                <p className="text-3xl font-bold text-gray-900 mt-1">
+                {/* <p className="text-3xl font-bold text-gray-900 mt-1">
                   ${totalInvestment.toLocaleString()}M
-                </p>
+                </p> */}
+                <AnimatedCounter
+                  end={totalInvestment}
+                  prefix="$"
+                  suffix="M"
+                  className="text-3xl font-bold text-gray-900 mt-1"
+                />
               </div>
               <div className="p-3 bg-purple-100 rounded-lg">
                 <DollarSign className="w-6 h-6 text-purple-600" />
