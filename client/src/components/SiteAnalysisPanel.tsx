@@ -124,7 +124,7 @@ export function SiteAnalysisPanel({ site, analysis, onClose, isOpen, coordinates
           {site?.isAiSuggested && (
             <div className="inline-flex items-center gap-2 bg-green-500/20 text-green-100 px-3 py-1 rounded-full text-sm">
               <CheckCircle className="w-4 h-4" />
-              AI Recommended
+              Higly recommended
             </div>
           )}
         </div>

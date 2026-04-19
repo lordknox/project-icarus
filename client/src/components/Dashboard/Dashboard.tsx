@@ -226,7 +226,7 @@ export function Dashboard() {
                         <div>
                           <p className="font-medium text-gray-900">{site.name}</p>
                           {site.isAiSuggested && (
-                            <p className="text-xs text-green-600">🤖 AI Recommended</p>
+                            <p className="text-xs text-green-600">Highly Recommended</p>
                           )}
                         </div>
                       </div>
@@ -303,7 +303,7 @@ export function Dashboard() {
                   </div>
                   {site.isAiSuggested && (
                     <div className="inline-flex items-center gap-1 bg-green-50 text-green-700 px-2 py-1 rounded text-xs mb-2">
-                      🤖 AI Recommended
+                      Highly Recommended
                     </div>
                   )}
                   <div className="space-y-2 text-xs">

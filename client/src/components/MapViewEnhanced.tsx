@@ -182,7 +182,7 @@ export function MapView() {
                 
                 {site.isAiSuggested && (
                   <div className="bg-green-50 text-green-700 text-xs px-2 py-1 rounded mb-2">
-                    🤖 AI Recommended
+                    Highly Recommended
                   </div>
                 )}
 
