@@ -26,6 +26,16 @@ Icon.Default.mergeOptions({
   shadowUrl: markerShadow,
 });
 
+const siteMarkerIcon = new Icon({
+  iconUrl: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNSA0MSI+PHBhdGggZD0iTTEyLjUgMEM1LjYgMCAwIDUuNiAwIDEyLjUgMCAyMi4yIDEyLjUgNDEgMTIuNSA0MVMyNSAyMi4yIDI1IDEyLjVDMjUgNS42IDE5LjQgMCAxMi41IDBaIiBmaWxsPSIjZWY0NDQ0Ii8+PGNpcmNsZSBjeD0iMTIuNSIgY3k9IjEyLjUiIHI9IjUuNSIgZmlsbD0id2hpdGUiLz48L3N2Zz4=',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [0, -41],
+  shadowUrl: markerShadow,
+  shadowSize: [41, 41],
+  shadowAnchor: [12, 41],
+});
+
 const INDIA_CENTER: LatLngExpression = [20.5937, 78.9629];
 const INDIA_ZOOM = 5;
 
@@ -166,6 +176,7 @@ export function MapView() {
           <Marker
             key={site.id}
             position={[parseFloat(site.latitude), parseFloat(site.longitude)]}
+            icon={siteMarkerIcon}
             eventHandlers={{
               click: () => handleSiteClick(site),
             }}
