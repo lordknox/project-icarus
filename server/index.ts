@@ -11,13 +11,18 @@ const PORT = process.env.PORT || 4000;
 //     credentials: true,
 // }));
 app.use(cors({
-  origin: [
-    'http://localhost:5173', // Local development
-    // 'https://project-icarus-q5au.onrender.com',
-    'https://project-icarus-five.vercel.app',
-  ],
+  origin: function (origin, callback) {
+    const allowedOrigins = [
+      'http://localhost:5173',
+      'https://project-icarus-five.vercel.app',
+    ];
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('CORS not allowed'));
+    }
+  },
   credentials: true,
-//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 }));
 app.options('*', (req, res) => {
   res.header('Access-Control-Allow-Origin', 'https://project-icarus-five.vercel.app');
