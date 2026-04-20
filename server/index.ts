@@ -14,6 +14,7 @@ app.use(cors({
   origin: [
     'http://localhost:5173', // Local development
     'https://project-icarus-q5au.onrender.com',
+    'https://project-icarus-five.vercel.app',
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
