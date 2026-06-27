@@ -6,7 +6,7 @@
     "description": "Interactive platform for wind and solar energy infrastructure mapping and analysis",
     "scripts": {
         "dev": "NODE_ENV=development tsx -r dotenv/config server/index.ts",
-        "dev:client": "vite",
+        "dev:client": "NODE_ENV=development vite",
         "dev:both": "concurrently \"npm run dev\" \"npm run dev:client\"",
         "build": "vite build && tsc",
         "build:client": "vite build",
