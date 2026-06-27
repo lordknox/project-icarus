@@ -10,7 +10,7 @@
         "dev:both": "concurrently \"npm run dev\" \"npm run dev:client\"",
         "build": "vite build && tsc",
         "build:client": "vite build",
-        "build:server": "tsc",
+        "build:server": "tsc -p server",
         "preview": "vite preview",
         "start": "node dist/server/index.js",
         "check": "tsc",

@@ -6,31 +6,35 @@ import { setupRoutes} from './routes.js';
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-// app.use(cors({
-//     origin: process.env.CLIENT_URL || 'http://localhost:5173',
-//     credentials: true,
-// }));
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+  'https://project-icarus-five.vercel.app',
+];
+
 app.use(cors({
   origin: function (origin, callback) {
-    const allowedOrigins = [
-      'http://localhost:5173',
-      'https://project-icarus-five.vercel.app',
-    ];
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('CORS not allowed'));
+    if (!origin) {
+      return callback(null, true);
     }
+    
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    
+    if (origin.startsWith('https://project-icarus-') && origin.endsWith('.vercel.app')) {
+      return callback(null, true);
+    }
+    
+    if (process.env.CLIENT_URL && origin === process.env.CLIENT_URL) {
+      return callback(null, true);
+    }
+    
+    callback(null, false);
   },
   credentials: true,
+  optionsSuccessStatus: 200,
 }));
-app.options('*', (req, res) => {
-  res.header('Access-Control-Allow-Origin', 'https://project-icarus-five.vercel.app');
-  res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  return res.sendStatus(200);
-});
 
 // middleware
 app.use(express.json());
